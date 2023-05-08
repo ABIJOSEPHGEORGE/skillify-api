@@ -43,6 +43,7 @@ module.exports = {
             const course = await Course.findOne({_id:req.params.id})
             return res.status(200).json(success("OK",course))
         }catch(err){
+            console.log(err)
             res.status(500).json(error("Something went wrong, Try after sometimes"))
         }
     },
