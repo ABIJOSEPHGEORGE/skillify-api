@@ -299,27 +299,18 @@ module.exports = {
             const { courseId, contentId, contentType,sessionId,payload} = req.body;
             
             const user = await User.findOne({email:req.user})
-            //finding the course status
-            const course_status = user.enrolled_course.map((item,index)=>{
-                if(item.course_id.toString()===courseId){
-                    return item;
-                }
-            })
+          
+
+            const course_status = user.enrolled_course.find((ele)=>ele.course_id.toString()===courseId);
+            const course_index = user.enrolled_course.findIndex((ele)=>ele.course_id.toString()===courseId);
             
+            console.log(course_status,"===course status===")
 
-            const course_index = course_status.findIndex((ele)=>ele!==undefined);
-         
-            
-            //finding and updating the content in the completion status
-            const current_section = course_status[course_index].completion_status.map((section,index)=>{
-                if(section.session_id.toString()===new mongoose.Types.ObjectId(sessionId).toString()){
-                    return section;
-                }
-            })
+      
 
-            const curr_index = current_section.findIndex((ele)=>ele!==undefined);
+            const current_section = course_status.completion_status.find((section)=>section.session_id.toString()===sessionId);
 
-
+           
             //submitting the assignment if the content is an assignment
             if(contentType==="assignment"){
                 const {_id} = await User.findOne({email:req.user});
@@ -329,9 +320,17 @@ module.exports = {
                 tutor:course.tutor.email,assignment_id:contentId,title:payload.question,description:payload.description});
             }
 
+
             //updating content status completed
-            current_section[curr_index].content.forEach((content,index)=>{
+            current_section.content.forEach((content,index)=>{
                 if(contentType==="lecture"&&content.video_id===contentId){
+                    console.log("marked completed====")
+                    //updating the video progress
+                    course_status.video_progress.forEach((ele)=>{
+                        if(ele.video_id===contentId){
+                            ele.completed = true;
+                        }
+                    })
                     content.completed=true;
                 }else if(contentType==="quiz"&&content.quiz_id===contentId){
                     content.completed = true;
@@ -346,7 +345,7 @@ module.exports = {
             
 
             //updating the active content
-            const incomplete_content = current_section[curr_index].content.reduce((acc,curr,index)=>{
+            const incomplete_content = current_section.content.reduce((acc,curr,index)=>{
                 if(!curr.completed){
                     return index;
                 }else{
@@ -355,31 +354,31 @@ module.exports = {
             },-1)
 
             if(incomplete_content!==-1){
-                current_section[curr_index].active_content = incomplete_content+1;
+                current_section.active_content = incomplete_content+1;
             }
 
            
 
             //checking whether all content in the section has been completed
-            const status = current_section[curr_index].content.every(obj=>obj.completed);
+            const status = current_section.content.every(obj=>obj.completed);
             //if all true update the current session as completed
             if(status){
-                current_section[curr_index].completed = true;
+                current_section.completed = true;
             }
 
             //calculating the percentage for updating the progress
-            const total_sessions = course_status[course_index].completion_status.length;
-            const total_content = course_status[course_index].completion_status.reduce((acc,curr)=>{
+            const total_sessions = course_status.completion_status.length;
+            const total_content = course_status.completion_status.reduce((acc,curr)=>{
                     acc = acc + curr.content.length
                     return acc;
             },0);
-            const total_completed_session = course_status[course_index].completion_status.reduce((acc,curr)=>{
+            const total_completed_session = course_status.completion_status.reduce((acc,curr)=>{
                 if(curr.completed){
                     acc = acc +1;
                 }
                 return acc;
             },0)
-            const total_completed_content = course_status[course_index].completion_status.reduce((acc,curr)=>{
+            const total_completed_content = course_status.completion_status.reduce((acc,curr)=>{
                 const completed =curr.content.reduce((con,concurr)=>{
                     if(concurr.completed){
                         con = con+1;
@@ -390,22 +389,19 @@ module.exports = {
                 return acc;
             },0)
 
-            //updatin gthe course progress
+            //updating the course progress
             const overallPercentage = (total_completed_content / total_content) * (total_completed_session / total_sessions) * 100;
             //updating the totalProgress
-            course_status[course_index].progress = Math.floor(overallPercentage)
+            course_status.progress = Math.floor(overallPercentage)
            
-            user.enrolled_course[course_index] = course_status[course_index]
 
-            
-            //updating the user 
+            user.enrolled_course[course_index] = course_status;
             await user.save()
-            
 
             res.status(200).json(success("OK"))
 
         }catch(err){
-          
+            console.log(err)
             res.status(500).json(error("Something wen't wrong..."))
         }
     },
