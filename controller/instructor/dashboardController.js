@@ -40,19 +40,40 @@ module.exports = {
     dashboardChart:async(req,res)=>{
         try{
           const orders = await Orders.find({});
-          const courses = orders.map((ele)=>{
-            return ele.courses;
-          })
+          const today = new Date(); // Current date
+            const lastSevenDays = new Date(today);
+            lastSevenDays.setDate(lastSevenDays.getDate() - 6); // Subtract 6 days to get a week's range
 
-          //avoiding duplicates id from the courses
-          
+            const filteredOrders = orders.filter(order => {
+            const orderDate = new Date(order.order_date); // Assuming 'order_date' is the property with the timestamp string
+            return orderDate >= lastSevenDays && orderDate <= today;
+            });
 
-          const tutor_course = await Promise.all(courses.map(async(id)=>{
-              return await Course.findOne({_id:id,"tutor.email":req.user});
-          }))
-          
-         
-          res.status(200).json(success("OK"))
+            const dateRange = [];
+            let currentDate = new Date(lastSevenDays);
+            while (currentDate <= today) {
+            dateRange.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            const dataWithZeroValues = dateRange.map(date => {
+            const matchingOrder = filteredOrders.find(order => {
+                const orderDate = new Date(order.order_date);
+                return orderDate.toDateString() === date.toDateString();
+            });
+
+            const billAmount = matchingOrder ? matchingOrder.bill_amount : 0;
+
+            return { date: date.toISOString().split('T')[0], bill_amount: billAmount };
+            });
+
+
+            const afterPayout = dataWithZeroValues.map(data => {
+                const updatedBillAmount = data.bill_amount - (data.bill_amount * 0.15); // Reduce 15% from the original bill amount
+                return { ...data, bill_amount: updatedBillAmount };
+              });
+
+          res.status(200).json(success("OK",{beforePayout:dataWithZeroValues,afterPayout:afterPayout}))
         }catch(err){
           
             res.status(500).json(error("Somethiing went wrong..."))

@@ -34,7 +34,6 @@ module.exports = {
            
             return res.status(200).json(success("OK",{courses:courses,currentPage:page,hasNextPage:productPerPage*page<courses.length,nextPage:parseInt(page)+1,lastPage:Math.ceil(courses.length/productPerPage)}))
         }catch(err){
-            console.log(err)
             res.status(500).json(error("Something went wrong, Try after sometimes"))
         }
     },
@@ -304,7 +303,7 @@ module.exports = {
             const course_status = user.enrolled_course.find((ele)=>ele.course_id.toString()===courseId);
             const course_index = user.enrolled_course.findIndex((ele)=>ele.course_id.toString()===courseId);
             
-            console.log(course_status,"===course status===")
+        
 
       
 
@@ -324,7 +323,7 @@ module.exports = {
             //updating content status completed
             current_section.content.forEach((content,index)=>{
                 if(contentType==="lecture"&&content.video_id===contentId){
-                    console.log("marked completed====")
+                  
                     //updating the video progress
                     course_status.video_progress.forEach((ele)=>{
                         if(ele.video_id===contentId){
@@ -401,7 +400,7 @@ module.exports = {
             res.status(200).json(success("OK"))
 
         }catch(err){
-            console.log(err)
+       
             res.status(500).json(error("Something wen't wrong..."))
         }
     },

@@ -5,7 +5,7 @@ const {upload}= require('../config/multer');
 const { addCategory, getAllCategory, updateCategoryStatus, deleteCategory, getCategory, editCategory, addSubcategory, allSubCategory, getSubCategory, editSubCategory, deleteSubCategory } = require('../controller/admin/categoryController');
 const { allCourses, singleCourse, approveCourse, rejectCourse, courseStatus } = require('../controller/admin/courseController');
 const { createCoupon, allCoupons, singleCoupon, updateCoupon, listAndUnlist } = require('../controller/admin/couponController');
-const { dashboardCOntent } = require('../controller/admin/dashboardController');
+const { dashboardCOntent, dashboardChart } = require('../controller/admin/dashboardController');
 
 
 const router = express.Router();
@@ -20,7 +20,8 @@ router.get('/courses',tokenVerification,allCourses);
 router.get('/course/:id',tokenVerification,singleCourse);
 router.get('/coupons',tokenVerification,allCoupons);
 router.get('/coupon/:id',singleCoupon);
-router.get('/dashboard',dashboardCOntent)
+router.get('/dashboard',dashboardCOntent);
+router.get('/dashboard/chart',dashboardChart)
 
 router.post('/login',adminLogin);
 router.post('/category/create',tokenVerification,upload.single("category_image"),addCategory);
@@ -35,6 +36,7 @@ router.put('/course/approve/:id',tokenVerification,approveCourse);
 router.put('/course/reject/:id',tokenVerification,rejectCourse);
 router.put('/course/status/:id',tokenVerification,courseStatus);
 router.put('/coupon/update/:id',updateCoupon);
+
 
 router.patch('/coupon/status/:id',listAndUnlist)
 
