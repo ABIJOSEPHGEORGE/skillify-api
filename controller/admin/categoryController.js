@@ -155,7 +155,7 @@ module.exports = {
             const subcategories = await Category.findOne({_id:category})
             return res.status(200).json(success("OK",subcategories))
         }catch(err){
-       
+           
             return res.status(500).json(error("Something went wrong, Try after sometime"));
         }
     },

@@ -1,4 +1,5 @@
 const Course = require('../../models/courseSchema');
+const Order = require('../../models/orderSchema');
 const Orders = require('../../models/orderSchema');
 const {error, success} = require('../../responseApi');
 module.exports = {
@@ -77,6 +78,30 @@ module.exports = {
         }catch(err){
           
             res.status(500).json(error("Somethiing went wrong..."))
+        }
+    },
+    salesReport:async(req,res)=>{
+        try{
+            const { from, to } = req.query;
+            
+           
+            const orders = await Order.find({
+                order_date: {
+                  $gte: new Date(from),
+                  $lte: new Date(to),
+                },
+              }).select('bill_amount order_date billing_address.order_id billing_address.first_name billing_address.last_name billing_address.state billing_address.country');
+          
+              const ordersWithPayout = orders.map(order => ({
+                ...order.toObject(),
+                after_payout: order.bill_amount * 0.85, // Assuming 15% commission
+              }));
+
+              res.status(200).json(success("OK",ordersWithPayout))
+
+        }catch(err){
+            
+            res.status(500).json(error('Something went wrong...'))
         }
     }
 }

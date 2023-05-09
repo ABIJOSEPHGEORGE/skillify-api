@@ -5,7 +5,7 @@ const {upload}= require('../config/multer');
 const { addCategory, getAllCategory, updateCategoryStatus, deleteCategory, getCategory, editCategory, addSubcategory, allSubCategory, getSubCategory, editSubCategory, deleteSubCategory } = require('../controller/admin/categoryController');
 const { allCourses, singleCourse, approveCourse, rejectCourse, courseStatus } = require('../controller/admin/courseController');
 const { createCoupon, allCoupons, singleCoupon, updateCoupon, listAndUnlist } = require('../controller/admin/couponController');
-const { dashboardCOntent, dashboardChart } = require('../controller/admin/dashboardController');
+const { dashboardCOntent, dashboardChart, salesReport } = require('../controller/admin/dashboardController');
 
 
 const router = express.Router();
@@ -21,7 +21,8 @@ router.get('/course/:id',tokenVerification,singleCourse);
 router.get('/coupons',tokenVerification,allCoupons);
 router.get('/coupon/:id',singleCoupon);
 router.get('/dashboard',dashboardCOntent);
-router.get('/dashboard/chart',dashboardChart)
+router.get('/dashboard/chart',dashboardChart);
+router.get('/sales-report',salesReport);
 
 router.post('/login',adminLogin);
 router.post('/category/create',tokenVerification,upload.single("category_image"),addCategory);

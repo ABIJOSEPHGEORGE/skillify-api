@@ -4,7 +4,7 @@ const {upload} = require('../config/multer');
 const { uploadVideo, createCourse, getAllCourses, deletCourse, editCourse } = require('../controller/instructor/courseController');
 const { parentSubCategories } = require('../controller/admin/categoryController');
 const { singleCourse } = require('../controller/user/courseController');
-const { dashboardContents, dashboardChart } = require('../controller/instructor/dashboardController');
+const { dashboardContents, dashboardChart, salesReport } = require('../controller/instructor/dashboardController');
 const { allAssignments, updateFeedBack } = require('../controller/instructor/assignmentsController');
 const { createAnnouncement, allAnnouncements, deleteAnnouncement, updateAnnouncement } = require('../controller/instructor/AnnouncementController');
 
@@ -22,6 +22,7 @@ router.get('/dashboard',dashboardContents);
 router.get('/dashboard/chart',dashboardChart);
 router.get('/assignments',allAssignments);
 router.get('/announcements',allAnnouncements);
+router.get('/sales-report',salesReport);
 
 router.post('/course/upload-video',upload.single('section_video'),uploadVideo);
 router.post('/course/create-course',upload.fields([

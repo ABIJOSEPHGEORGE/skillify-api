@@ -4,13 +4,14 @@ const { tokenVerification } = require('../middlewares/authMiddlewares');
 const { instructorSignup } = require('../controller/instructor/instructorAuth');
 const { getCourses, singleCourse } = require('../controller/user/courseController');
 const { dashboardContents } = require('../controller/instructor/dashboardController');
+const { parentSubCategories } = require('../controller/admin/categoryController');
 const router = express.Router();
 
 
 router.get('/resend-email/:id/',resendEmail);
 router.get('/courses',getCourses);
 router.get('/course/:id',singleCourse);
-
+router.get('/subcategories/:id',parentSubCategories);
 
 router.post('/verify-email',verifyEmail);
 router.post('/login',userLogin);

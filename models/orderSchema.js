@@ -24,6 +24,9 @@ const Order = mongoose.model('Order',new mongoose.Schema({
         country:{
             type:String,
             required:true
+        },
+        email:{
+            type:String,
         }
     },
     order_date:{
