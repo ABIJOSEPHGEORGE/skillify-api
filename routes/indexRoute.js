@@ -13,6 +13,7 @@ router.get('/courses',getCourses);
 router.get('/course/:id',singleCourse);
 router.get('/subcategories/:id',parentSubCategories);
 
+
 router.post('/verify-email',verifyEmail);
 router.post('/login',userLogin);
 router.post('/register',userRegistration);

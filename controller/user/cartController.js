@@ -28,6 +28,7 @@ module.exports = {
                 return res.status(200).json(success("OK",false))
             }
         }catch(err){
+            
             res.status(500).json(error("Something went wrong, Try after sometimes"))
         }
     },
