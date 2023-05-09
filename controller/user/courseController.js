@@ -14,7 +14,7 @@ module.exports = {
             const searchKey = req.query.search === "null" ? {} : {"course_title" : {$regex:req.query.search,$options: "i"}}
             
             //pagination
-            const productPerPage = 5;
+            const productPerPage = 2;
             const page = req.query.p??1;
 
             //sorting
@@ -31,8 +31,10 @@ module.exports = {
             {$limit:productPerPage},
             {$sort:{"course_sale_price":sort}}
             ]);
+
+            const total_courses = await Course.find({})
            
-            return res.status(200).json(success("OK",{courses:courses,currentPage:page,hasNextPage:productPerPage*page<courses.length,nextPage:parseInt(page)+1,lastPage:Math.ceil(courses.length/productPerPage)}))
+            return res.status(200).json(success("OK",{courses:courses,currentPage:page,hasNextPage:productPerPage*page<courses.length,nextPage:parseInt(page)+1,lastPage:Math.ceil(total_courses.length/productPerPage)}))
         }catch(err){
             res.status(500).json(error("Something went wrong, Try after sometimes"))
         }
