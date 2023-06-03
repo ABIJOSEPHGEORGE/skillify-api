@@ -280,7 +280,8 @@ module.exports = {
     fetchCourseContent:async(req,res)=>{
         try{
             const courseId = req.params.id;
-            const {curriculum} = await Course.findOne({_id:courseId}).select('curriculum');
+            const curriculum = await Course.findOne({_id:courseId})
+            console.log(curriculum)
             res.status(200).json(success("OK",curriculum));
         }catch(err){
            
