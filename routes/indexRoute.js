@@ -2,7 +2,7 @@ const express = require('express');
 const { userRegistration,verifyEmail, resendEmail, userLogin, verifyToken, resetPassword, forgotPassword, verifyResetEmail } = require('../controller/user/authController');
 const { tokenVerification } = require('../middlewares/authMiddlewares');
 const { instructorSignup } = require('../controller/instructor/instructorAuth');
-const { getCourses, singleCourse } = require('../controller/user/courseController');
+const { getCourses, singleCourse, courseReviews } = require('../controller/user/courseController');
 const { dashboardContents } = require('../controller/instructor/dashboardController');
 const { parentSubCategories } = require('../controller/admin/categoryController');
 const router = express.Router();
@@ -12,6 +12,7 @@ router.get('/resend-email/:id/',resendEmail);
 router.get('/courses',getCourses);
 router.get('/course/:id',singleCourse);
 router.get('/subcategories/:id',parentSubCategories);
+router.get('/course/reviews/:id',courseReviews);
 
 
 router.post('/verify-email',verifyEmail);

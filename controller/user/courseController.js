@@ -122,10 +122,11 @@ module.exports = {
     },
     allReviews:async(req,res)=>{
         try{
-            const {_id,enrolled_course} = await User.findOne({email:req.user});
             const course = await Course.findOne({_id:req.params.id}).select('reviews');
             const totalReviews = course.reviews.length;
+          
             //checking the current user alreay wrote a review
+            const {_id,enrolled_course} = await User.findOne({email:req.user});
             let isDone = course.reviews.reduce((acc, courseCurr) => {
                 const response = enrolled_course.reduce((acc2, userCurr) => {
                   if (userCurr.course_id.toString() === course._id.toString() && courseCurr.userId.toString() === _id.toString()) {
@@ -149,6 +150,20 @@ module.exports = {
             res.status(200).json(success("OK",{reviews:course.reviews,currentUser:isDone,average:average,totalReviews:totalReviews}));
         }catch(err){
           
+            res.status(500).json(error("Something wen't wrong, Try after sometimes"))
+        }
+    },
+    //reviews for guest mode
+    courseReviews:async(req,res)=>{
+        try{
+            const course = await Course.findOne({_id:req.params.id}).select('reviews');
+            const totalReviews = course.reviews.length;
+            const average = course.reviews.reduce((acc,curr)=>{
+                acc = acc+curr.rating;
+                return acc/totalReviews;
+            },0)
+            res.status(200).json(success("OK",{reviews:course.reviews,currentUser:null,average:average,totalReviews:totalReviews}));
+        }catch(err){
             res.status(500).json(error("Something wen't wrong, Try after sometimes"))
         }
     },

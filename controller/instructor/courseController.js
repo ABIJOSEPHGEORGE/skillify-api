@@ -70,7 +70,6 @@ module.exports ={
             const courses = await Course.find({"tutor.email":req.user});
             return res.status(200).json(success("OK",courses));
         }catch(err){
-       
             return res.status(500).json(error("Something wen't wrong, Try after sometimes"));
         }
     },
