@@ -36,6 +36,7 @@ module.exports = {
            
             return res.status(200).json(success("OK",{courses:courses,currentPage:page,hasNextPage:productPerPage*page<courses.length,nextPage:parseInt(page)+1,lastPage:Math.ceil(total_courses.length/productPerPage)}))
         }catch(err){
+            console.log(err)
             res.status(500).json(error("Something went wrong, Try after sometimes"))
         }
     },
@@ -296,7 +297,7 @@ module.exports = {
         try{
             const courseId = req.params.id;
             const curriculum = await Course.findOne({_id:courseId})
-            console.log(curriculum)
+       
             res.status(200).json(success("OK",curriculum));
         }catch(err){
            
